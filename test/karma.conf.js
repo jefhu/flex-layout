@@ -14,22 +14,22 @@ module.exports = (config) => {
       require('karma-firefox-launcher'),
       require('karma-sourcemap-loader'),
       require('karma-coverage'),
-      require('karma-spec-reporter')
     ],
     files: [
-      {pattern: 'node_modules/core-js/client/core.js', included: true, watched: false},
+      {pattern: 'node_modules/core-js/client/core.min.js', included: true, watched: false},
       {pattern: 'node_modules/tslib/tslib.js', included: true, watched: false},
-      {pattern: 'node_modules/systemjs/dist/system.src.js', included: true, watched: false},
-      {pattern: 'node_modules/zone.js/dist/zone.js', included: true, watched: false},
-      {pattern: 'node_modules/zone.js/dist/proxy.js', included: true, watched: false},
+      {pattern: 'node_modules/systemjs/dist/system.js', included: true, watched: false},
+      {pattern: 'node_modules/zone.js/dist/zone.min.js', included: true, watched: false},
+      {pattern: 'node_modules/zone.js/dist/proxy.min.js', included: true, watched: false},
       {pattern: 'node_modules/zone.js/dist/sync-test.js', included: true, watched: false},
-      {pattern: 'node_modules/zone.js/dist/jasmine-patch.js', included: true, watched: false},
+      {pattern: 'node_modules/zone.js/dist/jasmine-patch.min.js', included: true, watched: false},
       {pattern: 'node_modules/zone.js/dist/async-test.js', included: true, watched: false},
       {pattern: 'node_modules/zone.js/dist/fake-async-test.js', included: true, watched: false},
 
       {pattern: 'node_modules/@angular/**/*', included: false, watched: false},
       {pattern: 'node_modules/rxjs/**/*', included: false, watched: false},
 
+      {pattern: 'test/karma-system-config.js', included: true, watched: false},
       {pattern: 'test/karma-test-shim.js', included: true, watched: false},
 
 
@@ -54,12 +54,8 @@ module.exports = (config) => {
       subdir: '.'
     },
 
-    specReporter: {
-      maxLogLines: 1,
-    },
-
     sauceLabs: {
-      testName: 'flex-layout',
+      testName: 'Angular Layout Unit Tests',
       startConnect: false,
       recordVideo: false,
       recordScreenshots: false,
@@ -87,8 +83,8 @@ module.exports = (config) => {
     browserDisconnectTolerance: 3,
     browserNoActivityTimeout: 300000,
     captureTimeout: 180000,
-    browsers: ['ChromeHeadlessCISandbox'],
 
+    browsers: ['ChromeHeadlessCISandbox'],
     singleRun: false,
 
     browserConsoleLogOptions: {
@@ -102,7 +98,7 @@ module.exports = (config) => {
         // accidentally on other tests.
         random: true
       }
-    }
+    },
   });
 
   if (process.env['TRAVIS']) {
@@ -131,6 +127,9 @@ module.exports = (config) => {
       throw new Error(`Platform "${platform}" unknown, but Travis specified. Exiting.`);
     }
 
+    // To guarantee a better stability for tests running on external browsers, we disable
+    // concurrency. Stability is compared to speed more important.
+    config.concurrency = 1;
     config.browsers = platformMap[platform][target.toLowerCase()];
   }
 };
